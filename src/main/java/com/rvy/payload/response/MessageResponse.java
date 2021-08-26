@@ -9,4 +9,9 @@ import lombok.NoArgsConstructor;
 @Data
 public class MessageResponse {
 	private String message;
+	private Integer orderId;
+	
+	public MessageResponse(String message) {
+		this.message = message;
+	}
 }

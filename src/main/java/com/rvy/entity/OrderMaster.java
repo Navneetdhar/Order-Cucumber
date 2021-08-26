@@ -111,6 +111,23 @@ public class OrderMaster {
 		this.orderId = orderId;
 		this.discountPercent = discountPercent;
 	}
+
+	public OrderMaster(Integer billNo, LocalDate orderDate, Double orderAmount, 
+			Double taxAmount, Double discountPercent, Double billingAmount, 
+			String paymentMode, String currencyType, Integer customerId, Integer storeId){
+		super();
+		this.billNo = billNo;
+		this.orderDate = orderDate;
+		this.orderAmount = orderAmount;
+		this.taxAmount = taxAmount;
+		this.discountPercent = discountPercent;
+		this.billingAmount = billingAmount;
+		this.paymentMode = paymentMode;
+		this.currencyType = currencyType;
+		this.customerId = customerId;
+		this.storeId = storeId;
+		
+	}
 	
 	
 }

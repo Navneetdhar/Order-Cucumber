@@ -18,6 +18,8 @@ public class OrderRequest {
 	private LocalDate orderDate;
 	private Double orderAmount;
 	private Double taxAmount;
+	// added discountPercent
+	private Double discountPercent;
 	private Double billingAmount;
 	private String paymentMode;
 	private String currencyType;

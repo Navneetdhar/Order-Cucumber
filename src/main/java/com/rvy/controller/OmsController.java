@@ -24,6 +24,7 @@ import com.rvy.entity.OrderMaster;
 import com.rvy.exception.OrderException;
 import com.rvy.payload.request.OrderRequest;
 import com.rvy.payload.response.MessageResponse;
+import com.rvy.payload.response.OrderResponse;
 import com.rvy.service.DiscountMasterServiceImpl;
 import com.rvy.service.OrderDetailServiceImpl;
 import com.rvy.service.OrderMasterServiceImpl;
@@ -187,20 +188,52 @@ public class OmsController {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
 		}
 	}
+//	@ApiOperation(value = "Add Orders",
+//			consumes = "order request",
+//			produces = "Message Response",
+//			response = MessageResponse.class,
+//			tags = "AddOrder",
+//			notes = "http://localhost:8083/rvy/api/oms/v1/orders")
+//	@PostMapping("/orders")
+//	public ResponseEntity<MessageResponse> addOrders(@RequestBody OrderRequest orderRequest) throws OrderException {
+//
+//		try {
+//			OrderMaster orderMaster = new OrderMaster(  orderRequest.getBillNo(),
+//					orderRequest.getOrderDate(),
+//					orderRequest.getOrderAmount(),
+//					orderRequest.getTaxAmount(),
+//					orderRequest.getBillingAmount(),
+//					orderRequest.getPaymentMode(),
+//					orderRequest.getCurrencyType(),
+//					orderRequest.getCustomerId(),
+//					orderRequest.getStoreId()
+//					);
+//			orderMaster.setOrderDetailList(orderRequest.getOrderDetails());
+//			orderMaster.setDiscountPercent(discountMasterService.findDiscount(orderRequest.getOrderAmount()));
+//			//orderMaster.setBillingAmount(orderMaster.getOrderAmount()- (orderMaster.getOrderAmount()*orderMaster.getDiscountPercent())/100);
+//			//orderMaster.setBillNo(orderMaster.getOrderId()+199);
+//			OrderMaster orderAdded = orderMasterService.addOrder(orderMaster);
+//			return ResponseEntity.ok(new MessageResponse("Order placed successfully",orderAdded.getOrderId()));
+//		}catch(ResponseStatusException e) {
+//			throw new OrderException(e.getMessage(),e);
+//		}
+//	}
+	
 	@ApiOperation(value = "Add Orders",
 			consumes = "order request",
-			produces = "Message Response",
-			response = MessageResponse.class,
+			produces = "Order Response",
+			response = OrderResponse.class,
 			tags = "AddOrder",
 			notes = "http://localhost:8083/rvy/api/oms/v1/orders")
 	@PostMapping("/orders")
-	public ResponseEntity<MessageResponse> addOrders(@RequestBody OrderRequest orderRequest) throws OrderException {
+	public ResponseEntity<OrderResponse> addOrders(@RequestBody OrderRequest orderRequest) throws OrderException {
 
 		try {
 			OrderMaster orderMaster = new OrderMaster(  orderRequest.getBillNo(),
 					orderRequest.getOrderDate(),
 					orderRequest.getOrderAmount(),
 					orderRequest.getTaxAmount(),
+					orderRequest.getDiscountPercent(),
 					orderRequest.getBillingAmount(),
 					orderRequest.getPaymentMode(),
 					orderRequest.getCurrencyType(),
@@ -208,15 +241,32 @@ public class OmsController {
 					orderRequest.getStoreId()
 					);
 			orderMaster.setOrderDetailList(orderRequest.getOrderDetails());
-			orderMaster.setDiscountPercent(discountMasterService.findDiscount(orderRequest.getOrderAmount()));
-			orderMaster.setBillingAmount(orderMaster.getOrderAmount()- (orderMaster.getOrderAmount()*orderMaster.getDiscountPercent())/100);
+			//orderMaster.setDiscountPercent(discountMasterService.findDiscount(orderRequest.getOrderAmount()));
+			//orderMaster.setBillingAmount(orderMaster.getOrderAmount()- (orderMaster.getOrderAmount()*orderMaster.getDiscountPercent())/100);
 			//orderMaster.setBillNo(orderMaster.getOrderId()+199);
-			orderMasterService.addOrder(orderMaster);
-			return ResponseEntity.ok(new MessageResponse("Order placed successfully"));
+			OrderMaster orderAdded = orderMasterService.addOrder(orderMaster);
+			OrderResponse orderResponse = new OrderResponse(
+										  orderAdded.getOrderId(),
+										  orderAdded.getBillNo(),
+										  orderAdded.getOrderDate(),
+										  orderAdded.getOrderAmount(),
+										  orderAdded.getTaxAmount(),
+										  orderAdded.getDiscountPercent(),
+										  orderAdded.getBillingAmount(),
+										  orderAdded.getPaymentMode(),
+										  orderAdded.getCurrencyType(),
+										  orderAdded.getCustomerId(),
+										  orderAdded.getStoreId(),
+										  orderAdded.getOrderDetailList()
+										   );
+			return ResponseEntity.ok(orderResponse);
+			//return ResponseEntity.ok(new MessageResponse("Order placed successfully",orderAdded.getOrderId()));
 		}catch(ResponseStatusException e) {
 			throw new OrderException(e.getMessage(),e);
 		}
 	}
+	
+	
 	@ApiOperation(value = "Delete Order By Id",
 			consumes = "Order id",
 			produces = "Order id of the deleted object",
@@ -232,5 +282,22 @@ public class OmsController {
 		}catch(ResponseStatusException e) {
 			throw new OrderException(e.getMessage(),e);
 		}
+	}
+	
+	@ApiOperation(value = "Find discount on the basis of Order Amount",
+			consumes = "Order Amount",
+			produces = "Discount Percent",
+			response = Double.class,
+			tags = "GetDiscount",
+			notes = "http://localhost:8083/rvy/api/oms/v1/discount/1500.45")
+	@GetMapping("/discount/{orderAmount}")
+	public ResponseEntity<Double> findDiscountPercent(@PathVariable("orderAmount") Double orderAmount) throws OrderException{
+		try {
+			Double discountPercent = discountMasterService.findDiscount(orderAmount);
+			return ResponseEntity.ok(discountPercent);
+		}catch(ResponseStatusException e) {
+			throw new OrderException(e.getMessage(),e);
+		}
+		
 	}
 }

@@ -46,8 +46,9 @@ public class OrderDetail {
 	@Column(columnDefinition = "NUMERIC(10,2)")
 	private Double itemTotal;
 	
-	@Column(columnDefinition = "NUMERIC(4)")
-	private Integer inventoryId;
+	@Column(length=10)
+	private String batchCode;
+	//private Integer inventoryId;
 	
 	
 	//private String productName;
