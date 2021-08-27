@@ -50,8 +50,9 @@ public class OrderDetail {
 	private String batchCode;
 	//private Integer inventoryId;
 	
+//	@Column(length=20)
+//	private String productName;
 	
-	//private String productName;
 	//@ManyToOne(cascade = CascadeType.ALL)
 	//@JoinColumn(name = "order_id")
 	//private OrderMaster orderMaster;
